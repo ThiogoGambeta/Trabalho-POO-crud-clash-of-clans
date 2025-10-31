@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Carta - Clash Royale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .error {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>➕ Nova Carta</h1>
+        
+        <form method="post" th:action="@{/cartas}" th:object="${carta}">
+            <div class="form-group">
+                <label for="nome" class="required">Nome</label>
+                <input type="text" 
+                       id="nome" 
+                       th:field="*{nome}"
+                       th:classappend="${#fields.hasErrors('nome')} ? 'form-control is-invalid' : 'form-control'"
+                       placeholder="Ex: Cavaleiro">
+                <span th:if="${#fields.hasErrors('nome')}" 
+                      th:errors="*{nome}" 
+                      class="error"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="dano" class="required">Dano</label>
+                <input type="number" 
+                       id="dano" 
+                       th:field="*{dano}"
+                       th:classappend="${#fields.hasErrors('dano')} ? 'form-control is-invalid' : 'form-control'"
+                       placeholder="Ex: 100"
+                       min="0">
+                <span th:if="${#fields.hasErrors('dano')}" 
+                      th:errors="*{dano}" 
+                      class="error"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="velocidadeAtaque" class="required">Velocidade de Ataque</label>
+                <input type="number" 
+                       id="velocidadeAtaque" 
+                       th:field="*{velocidadeAtaque}"
+                       th:classappend="${#fields.hasErrors('velocidadeAtaque')} ? 'form-control is-invalid' : 'form-control'"
+                       placeholder="Ex: 1.5"
+                       step="0.1"
+                       min="0.1">
+                <span th:if="${#fields.hasErrors('velocidadeAtaque')}" 
+                      th:errors="*{velocidadeAtaque}" 
+                      class="error"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="velocidadeArena" class="required">Velocidade na Arena</label>
+                <input type="number" 
+                       id="velocidadeArena" 
+                       th:field="*{velocidadeArena}"
+                       th:classappend="${#fields.hasErrors('velocidadeArena')} ? 'form-control is-invalid' : 'form-control'"
+                       placeholder="Ex: 50"
+                       min="0">
+                <span th:if="${#fields.hasErrors('velocidadeArena')}" 
+                      th:errors="*{velocidadeArena}" 
+                      class="error"></span>
+            </div>
+            
+            <div class="form-group">
+                <label class="required">Dado em Área?</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" 
+                           id="indicadorDadoArea" 
+                           th:field="*{indicadorDadoArea}">
+                    <label for="indicadorDadoArea" style="margin: 0; font-weight: normal;">
+                        Marque se a carta causa dano em área
+                    </label>
+                </div>
+                <span th:if="${#fields.hasErrors('indicadorDadoArea')}" 
+                      th:errors="*{indicadorDadoArea}" 
+                      class="error"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="imagemUrl">URL da Imagem</label>
+                <input type="text" 
+                       id="imagemUrl" 
+                       th:field="*{imagemUrl}"
+                       placeholder="Ex: https://exemplo.com/imagem.png">
+                <small style="color: #666; font-size: 0.9em; display: block; margin-top: 5px;">
+                    Cole a URL da imagem da carta (opcional)
+                </small>
+            </div>
+            
+            <div class="buttons">
+                <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                <a th:href="@{/cartas}" class="btn btn-secondary">❌ Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

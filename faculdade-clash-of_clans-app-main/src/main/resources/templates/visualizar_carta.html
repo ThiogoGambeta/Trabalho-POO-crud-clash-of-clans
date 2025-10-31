@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Carta - Clash Royale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card-detail {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .card-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-image-large {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            padding: 10px;
+        }
+
+        .card-image-placeholder {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .card-header h2 {
+            font-size: 2rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .card-body {
+            padding: 40px;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .property-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .property-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .property-value {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .property-value.boolean-true {
+            color: #28a745;
+        }
+
+        .property-value.boolean-false {
+            color: #dc3545;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .property-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📇 Detalhes da Carta</h1>
+        </div>
+
+        <div class="card-detail">
+            <div class="card-header">
+                <div class="card-image-container">
+                    <img th:if="${carta.imagemUrl != null and !carta.imagemUrl.isEmpty()}" 
+                         th:src="${carta.imagemUrl}" 
+                         th:alt="${carta.nome}"
+                         class="card-image-large"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="card-image-placeholder" 
+                         th:style="${carta.imagemUrl != null and !carta.imagemUrl.isEmpty()} ? 'display: none;' : 'display: flex;'">
+                        🃏
+                    </div>
+                </div>
+                <h2 th:text="${carta.nome}">Nome da Carta</h2>
+                <span class="badge" 
+                      th:classappend="${carta.indicadorDadoArea} ? 'badge-success' : 'badge-danger'"
+                      th:text="${carta.indicadorDadoArea} ? '💥 Dano em Área' : '🎯 Dano Único'">
+                </span>
+            </div>
+
+            <div class="card-body">
+                <div class="property-grid">
+                    <div class="property-item">
+                        <div class="property-label">📋 Código</div>
+                        <div class="property-value" th:text="${carta.codigo}">1</div>
+                    </div>
+
+                    <div class="property-item">
+                        <div class="property-label">⚔️ Dano</div>
+                        <div class="property-value" th:text="${carta.dano}">100</div>
+                    </div>
+
+                    <div class="property-item">
+                        <div class="property-label">⚡ Velocidade de Ataque</div>
+                        <div class="property-value" th:text="${carta.velocidadeAtaque} + 's'">1.5s</div>
+                    </div>
+
+                    <div class="property-item">
+                        <div class="property-label">🏃 Velocidade na Arena</div>
+                        <div class="property-value" th:text="${carta.velocidadeArena}">60</div>
+                    </div>
+
+                    <div class="property-item">
+                        <div class="property-label">💣 Tipo de Dano</div>
+                        <div class="property-value" 
+                             th:classappend="${carta.indicadorDadoArea} ? 'boolean-true' : 'boolean-false'"
+                             th:text="${carta.indicadorDadoArea} ? 'Em Área' : 'Único'">
+                            Em Área
+                        </div>
+                    </div>
+
+                    <div class="property-item" th:if="${carta.imagemUrl != null and !carta.imagemUrl.isEmpty()}">
+                        <div class="property-label">🖼️ URL da Imagem</div>
+                        <div class="property-value" style="font-size: 0.75rem; word-break: break-all;" 
+                             th:text="${#strings.length(carta.imagemUrl) > 50 ? #strings.substring(carta.imagemUrl, 0, 50) + '...' : carta.imagemUrl}">
+                            URL
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a th:href="@{/cartas/{codigo}/editar(codigo=${carta.codigo})}" class="btn btn-primary">
+                        ✏️ Editar Carta
+                    </a>
+                    <a th:href="@{/cartas}" class="btn btn-secondary">
+                        ← Voltar para Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
